@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.smbms.dao.bill.BillDao">
+    <resultMap id="billResult" type="Bill">
+        <id property="id" column="id"/>
+        <result property="productName" column="productName"/>
+        <result property="billCode" column="billCode"/>
+        <result property="providerName" column="pName"/>
+        <result property="totalPrice" column="totalPrice"/>
+        <result property="isPayment" column="isPayment"/>
+        <result property="creationDate" column="creationDate"/>
+    </resultMap>
+    <select id="queryBill" parameterType="Bill" resultMap="billResult">
+        SELECT b.*,p.proName AS pName FROM smbms_bill b,smbms_provider p
+        <trim prefix="where" prefixOverrides="and|or" >
+              <if test="productName">
+                  and productName like CONCAT('%',#{productName},'%')
+              </if>
+              <if test="providerId">
+                  and providerId=#{providerId}
+              </if>
+              <if test="isPayment">
+                  and isPayment=#{isPayment}
+              </if>
+            and b.providerId=p.id limit #{start},#{size}
+        </trim>
+    </select>
+    <insert id="addBill" parameterType="Bill">
+        INSERT INTO `smbms_bill`(billCode,productName,productDesc,productUnit,productCount,totalPrice,isPayment,createdBy,creationDate,modifyBy,modifyDate,providerId)
+        VALUE(#{billCode},#{productName},#{productDesc},#{productUnit},#{productCount},#{totalPrice},#{isPayment},#{createdBy},#{creationDate},#{modifyDate},#{modifyDate},#{providerId})
+    </insert>
+    <update id="updateBill" parameterType="Bill">
+        UPDATE smbms_bill
+        <trim prefix="set" suffixOverrides="," suffix="where id=#{id}">
+            <if test="billCode!=null">
+                billCode=#{billCode},
+            </if>
+            <if test="productName!=null">
+                productName=#{productName},
+            </if>
+            <if test="productDesc!=null">
+                productDesc=#{productDesc},
+            </if>
+            <if test="productUnit">
+                productUnit=#{productUnit},
+            </if>
+            <if test="productCount!=null">
+                productCount=#{productCount},
+            </if>
+            <if test="totalPrice!=null">
+                totalPrice=#{totalPrice},
+            </if>
+            <if test="isPayment!=null">
+                isPayment=#{isPayment},
+            </if>
+            <if test="createdBy!=null">
+                createdBy=#{createdBy},
+            </if>
+            <if test="creationDate!=null">
+                creationDate=#{creationDate},
+            </if>
+            <if test="modifyBy!=null">
+                modifyBy=#{modifyBy},
+            </if>
+            <if test="modifyDate!=null">
+                modifyDate=#{modifyDate},
+            </if>
+            <if test="providerId!=null">
+                providerId=#{providerId},
+            </if>
+        </trim>
+    </update>
+
+    <delete id="deleteBill" parameterType="int">
+        DELETE FROM smbms_bill WHERE id=#{id}
+    </delete>
+
+    <select id="countBill" parameterType="Bill" resultType="Integer">
+        SELECT count(1) FROM smbms_bill
+        <trim prefix="where" prefixOverrides="and" >
+            <if test="productName!=null and productName!=''">
+                and productName like CONCAT('%',#{productName},'%')
+            </if>
+            <if test="providerId!=null and providerId!=0">
+                and providerId=#{providerId}
+            </if>
+            <if test="isPayment!=null and isPayment!=0">
+                and isPayment=#{isPayment}
+            </if>
+        </trim>
+    </select>
+</mapper>

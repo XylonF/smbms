@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.smbms.dao.role.RoleDao">
+     <select id="queryRole" parameterType="Role" resultType="Role">
+         select * from smbms_role
+         <trim prefix="where" prefixOverrides="and|or">
+              <if test="roleCode!=null">
+                  and roleCode=#{roleCode}
+              </if>
+              <if test="roleName!=null">
+                  and roleName like CONCAT('%',#{roleName},'%')
+              </if>
+         </trim>
+     </select>
+    <insert id="addRole" parameterType="Role">
+        INSERT INTO smbms_role(roleCode,roleName,createdBy,creationDate,modifyBy,modifyDate)
+        VALUE(#{roleCode},#{roleName},#{createdBy},#{creationDate},#{modifyBy},#{modifyDate})
+    </insert>
+
+    <update id="updateRole" parameterType="Role">
+        UPDATE `smbms_role`
+        <trim prefix="set" suffixOverrides="," suffix="where id=#{id}">
+            <if test="roleCode!=null">
+                roleCode=#{roleCode},
+            </if>
+            <if test="roleName!=null">
+                roleName=#{roleName},
+            </if>
+            <if test="createdBy!=null">
+                createdBy=#{createdBy},
+            </if>
+            <if test="creationDate!=null">
+                creationDate=#{creationDate},
+            </if>
+            <if test="modifyBy!=null">
+                modifyBy=#{modifyBy},
+            </if>
+            <if test="modifyDate!=null">
+                modifyDate=#{modifyDate},
+            </if>
+        </trim>
+    </update>
+
+    <delete id="deleteRole" parameterType="int">
+          DELETE FROM smbms_role WHERE id=#{id}
+    </delete>
+</mapper>
